@@ -11,13 +11,13 @@
 <meta property="og:url" content="https://rizkyy-cell.github.io/kegiatan-kelulusan/">
 <meta property="og:title" content="Perpisahan Angkatan 11 — 2026">
 <meta property="og:description" content="Setiap Momen, Selamanya Milik Kita. Jelajahi 1218 foto kenangan Angkatan 11 TITL, TKRO, dan MPLB.">
-<meta property="og:image" content="https://drive.google.com/thumbnail?id=1MyVPKl8fceBu4MNzOxrQ5tNmVnj1h&sz=w1200">
+<meta property="og:image" content="https://drive.google.com/thumbnail?id=1MyVPKl8fceBu4MNzOxrQ5tNmVnj1h_TE&sz=w1200">
 
 <meta property="twitter:card" content="summary_large_image">
 <meta property="twitter:url" content="https://link-website-kamu.com/">
 <meta property="twitter:title" content="Perpisahan Angkatan 11 — 2026">
 <meta property="twitter:description" content="Setiap Momen, Selamanya Milik Kita. Jelajahi 1218 foto kenangan Angkatan 11 TITL, TKRO, dan MPLB.">
-<meta property="twitter:image" content="https://drive.google.com/thumbnail?id=1MyVPKl8fceBu4MNzOxrQ5tNmVnj1h&sz=w1200">
+<meta property="twitter:image" content="https://drive.google.com/thumbnail?id=1MyVPKl8fceBu4MNzOxrQ5tNmVnj1h_TE&sz=w1200">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -385,59 +385,129 @@
   .btn-load:hover { color: var(--deep); }
   .btn-load span { position: relative; z-index: 1; }
 
-  /* ── LIGHTBOX ── */
+  /* ── LIGHTBOX KEREN ── */
   .lightbox {
     position: fixed; inset: 0; z-index: 8000;
-    background: rgba(5,5,10,0.97);
+    background: rgba(5,5,12,0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     display: flex; align-items: center; justify-content: center;
     opacity: 0; pointer-events: none;
-    transition: opacity 0.3s ease;
-    backdrop-filter: blur(10px);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .lightbox.open { opacity: 1; pointer-events: all; }
-  .lightbox img {
+  
+  .lb-content {
+    position: relative;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
     max-width: 90vw; max-height: 85vh;
-    border-radius: 4px;
+  }
+
+  .lightbox img {
+    max-width: 100%; max-height: 80vh;
+    border-radius: 8px;
     object-fit: contain;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-    animation: lbReveal 0.4s ease;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,168,76,0.15);
+    transform: scale(0.9) translateY(20px);
+    opacity: 0;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); /* Efek Membal */
   }
-  @keyframes lbReveal {
-    from { transform: scale(0.9); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+  .lightbox.open img {
+    transform: scale(1) translateY(0);
+    opacity: 1;
   }
-  .lb-close {
-    position: fixed; top: 1.5rem; right: 1.5rem;
-    width: 40px; height: 40px;
-    border: 1px solid rgba(201,168,76,0.4);
-    background: transparent;
-    color: var(--gold); font-size: 1.2rem;
-    display: flex; align-items: center; justify-content: center;
-    cursor: none; border-radius: 50%;
-    transition: all 0.2s ease;
-  }
-  .lb-close:hover { background: var(--gold); color: var(--deep); }
-  .lb-nav {
-    position: fixed; top: 50%; transform: translateY(-50%);
-    width: 44px; height: 44px;
+
+  /* Tombol Kontrol */
+  .lb-ctrl {
+    position: fixed;
+    background: rgba(18, 16, 30, 0.6);
     border: 1px solid rgba(201,168,76,0.3);
-    background: rgba(10,10,18,0.7);
-    color: var(--gold); font-size: 1.2rem;
+    color: var(--gold-light);
     display: flex; align-items: center; justify-content: center;
-    cursor: none; border-radius: 2px;
-    transition: all 0.2s ease;
+    cursor: none;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    z-index: 8010;
   }
-  .lb-nav:hover { background: var(--gold); color: var(--deep); }
-  .lb-prev { left: 1rem; }
-  .lb-next { right: 1rem; }
-  .lb-caption {
-    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+  .lb-ctrl:hover {
+    background: var(--gold);
+    color: var(--deep);
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(201,168,76,0.4);
+    border-color: var(--gold);
+  }
+  .lb-ctrl svg { width: 22px; height: 22px; fill: currentColor; }
+
+  .lb-close {
+    top: 1.5rem; right: 1.5rem;
+    width: 48px; height: 48px; border-radius: 50%;
+  }
+  
+  .lb-nav {
+    top: 50%; transform: translateY(-50%);
+    width: 50px; height: 50px; border-radius: 50%;
+  }
+  .lb-nav:hover { transform: translateY(-50%) scale(1.1); }
+  .lb-prev { left: 1.5rem; }
+  .lb-next { right: 1.5rem; }
+
+  .lb-download {
+    top: 1.5rem; left: 1.5rem;
+    padding: 0 1.5rem; height: 48px;
+    border-radius: 999px;
     font-family: 'Space Mono', monospace;
-    font-size: 0.6rem; letter-spacing: 0.25em;
-    color: var(--silver); text-transform: uppercase;
-    background: rgba(10,10,18,0.7);
-    padding: 0.4rem 1rem; border-radius: 999px;
+    font-size: 0.7rem; letter-spacing: 0.15em;
+    text-transform: uppercase; text-decoration: none;
+    gap: 0.5rem;
   }
+  .lb-download svg { width: 18px; height: 18px; }
+
+  .lb-caption {
+    position: absolute; bottom: -2.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.25em;
+    color: var(--gold-pale); text-transform: uppercase;
+    background: transparent;
+    padding: 0; white-space: nowrap;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    opacity: 0; transform: translateY(-10px);
+    transition: all 0.5s ease 0.2s;
+  }
+  .lightbox.open .lb-caption {
+    opacity: 1; transform: translateY(0);
+  }
+
+  /* Responsif di HP */
+  @media (max-width: 768px) {
+    /* 1. Matikan custom cursor biar nggak nyangkut di layar sentuh */
+    .cursor, .cursor-trail { display: none !important; }
+    body, a, button, .gallery-item { cursor: auto !important; }
+
+    /* 2. Rapikan panah Kiri-Kanan */
+    .lb-nav { 
+      width: 40px; height: 40px; 
+      display: flex; 
+      background: rgba(18, 16, 30, 0.4); 
+      border: none; 
+    }
+    .lb-prev { left: 0.5rem; }
+    .lb-next { right: 0.5rem; }
+    
+    /* 3. Sesuaikan ukuran tombol Close */
+    .lb-close { top: 1rem; right: 1rem; width: 40px; height: 40px; }
+    
+    /* 4. Ubah tombol Simpan jadi BULAT sempurna seperti tombol Close */
+    .lb-download { 
+      top: 1rem; left: 1rem; 
+      width: 40px; height: 40px; /* Samakan dimensi dengan tombol close */
+      padding: 0; /* Buang padding yang bikin lonjong */
+      justify-content: center; 
+    }
+    .lb-download span { display: none; /* Sembunyikan teks */ }
+    .lb-download svg { margin: 0; width: 20px; height: 20px; }
+  }
+
+
 
   /* ── QUOTE SECTION ── */
   .quote-section {
@@ -668,7 +738,7 @@
   <div class="gallery-grid" id="galleryGrid"></div>
 
   <div class="load-more-wrapper reveal">
-    <button class="btn-load" id="loadMoreBtn"><span>Muat Lebih Banyak ✦</span></button>
+    <button class="btn-load" id="loadMoreBtn"><span>Tampilkan Semua ✦</span></button>
   </div>
 </section>
 
@@ -701,14 +771,30 @@
   </div>
 </footer>
 
-<!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox">
-  <button class="lb-close" id="lbClose">✕</button>
-  <button class="lb-nav lb-prev" id="lbPrev">‹</button>
-  <img id="lbImg" src="" alt="">
-  <button class="lb-nav lb-next" id="lbNext">›</button>
-  <div class="lb-caption" id="lbCaption"></div>
+  <button class="lb-ctrl lb-close" id="lbClose">
+    <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+  </button>
+  
+  <a href="#" class="lb-ctrl lb-download" id="lbDownload" target="_blank">
+    <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+    <span>Simpan</span>
+  </a>
+  
+  <button class="lb-ctrl lb-nav lb-prev" id="lbPrev">
+    <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+  </button>
+  
+  <div class="lb-content">
+    <img id="lbImg" src="" alt="">
+    <div class="lb-caption" id="lbCaption"></div>
+  </div>
+  
+  <button class="lb-ctrl lb-nav lb-next" id="lbNext">
+    <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+  </button>
 </div>
+
 
 <script>
 // ═══════════════════════════════
@@ -1387,8 +1473,9 @@ const JURUSAN_COLORS = {
   TITL: ['#1a1030','#2a1a50','#3a2070'],
   TKRO: ['#0d1a10','#1a3020','#204030'],
   MPLB: ['#1a0d10','#301018','#401520'],
+  Momen: ['#1a150a','#302510','#403010']
 };
-const JURUSAN_ACCENT = { TITL: '#7a5cf0', TKRO: '#4cad6c', MPLB: '#e8748a' };
+const JURUSAN_ACCENT = { TITL: '#7a5cf0', TKRO: '#4cad6c', MPLB: '#e8748a', Momen: '#c9a84c' };
 
 function getPhotoUrl(photo) {
   if (photo.demo) return null; 
@@ -1400,7 +1487,7 @@ function getPhotoUrl(photo) {
 // ═══════════════════════════════
 let currentFilter = 'all';
 let currentBatch = 0;
-const BATCH_SIZE = 24;
+let BATCH_SIZE = 24;
 let lightboxIndex = 0;
 let visiblePhotos = [];
 
@@ -1542,15 +1629,22 @@ function closeLightbox() {
 function updateLightbox() {
   const photo = visiblePhotos[lightboxIndex];
   const lbImg = document.getElementById('lbImg');
+  const lbDownload = document.getElementById('lbDownload'); // Mengambil elemen tombol download
+  
   document.getElementById('lbCaption').textContent =
     `${photo.jurusan} · Foto ${lightboxIndex + 1} / ${visiblePhotos.length} · Perpisahan 2026`;
 
   if (photo.demo) {
     lbImg.src = createPlaceholderCanvas(photo.jurusan, photo.demoIndex);
+    lbDownload.style.display = 'none'; // Sembunyikan tombol kalau cuma foto demo
   } else {
     lbImg.src = `https://drive.google.com/thumbnail?id=${photo.id}&sz=w1200`;
+    // Menggunakan link khusus Google Drive untuk langsung mendownload file aslinya
+    lbDownload.href = `https://drive.google.com/uc?export=download&id=${photo.id}`;
+    lbDownload.style.display = 'flex'; // Munculkan tombol
   }
 }
+
 
 document.getElementById('lbClose').addEventListener('click', closeLightbox);
 document.getElementById('lbPrev').addEventListener('click', () => {
@@ -1572,8 +1666,12 @@ document.getElementById('lightbox').addEventListener('click', e => {
 });
 
 document.getElementById('loadMoreBtn').addEventListener('click', () => {
-  renderGallery(true);
+  // Memuat seluruh sisa antrean foto secara instan tanpa merusak rumus
+  while (currentBatch * BATCH_SIZE < visiblePhotos.length) {
+    renderGallery(true);
+  }
 });
+
 
 // ═══════════════════════════════
 //  STARS
