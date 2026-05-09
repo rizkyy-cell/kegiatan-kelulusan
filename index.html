@@ -46,6 +46,14 @@
     overflow-x: hidden;
     cursor: none;
   }
+    /* ── ANTI MALING GAMBAR (NO HOLD & NO DRAG) ── */
+  img {
+    -webkit-touch-callout: none !important; /* Mematikan menu "Simpan Gambar" di HP */
+    -webkit-user-select: none !important;   /* Mencegah gambar kena blok */
+    user-select: none !important;
+    -webkit-user-drag: none !important;     /* Mencegah gambar diseret */
+    pointer-events: none;                   /* Aman untuk lightbox */
+  }
 
   /* CUSTOM CURSOR */
   .cursor {
@@ -477,38 +485,6 @@
     opacity: 1; transform: translateY(0);
   }
 
-  /* Responsif di HP */
-  @media (max-width: 768px) {
-    /* 1. Matikan custom cursor biar nggak nyangkut di layar sentuh */
-    .cursor, .cursor-trail { display: none !important; }
-    body, a, button, .gallery-item { cursor: auto !important; }
-
-    /* 2. Rapikan panah Kiri-Kanan */
-    .lb-nav { 
-      width: 40px; height: 40px; 
-      display: flex; 
-      background: rgba(18, 16, 30, 0.4); 
-      border: none; 
-    }
-    .lb-prev { left: 0.5rem; }
-    .lb-next { right: 0.5rem; }
-    
-    /* 3. Sesuaikan ukuran tombol Close */
-    .lb-close { top: 1rem; right: 1rem; width: 40px; height: 40px; }
-    
-    /* 4. Ubah tombol Simpan jadi BULAT sempurna seperti tombol Close */
-    .lb-download { 
-      top: 1rem; left: 1rem; 
-      width: 40px; height: 40px; /* Samakan dimensi dengan tombol close */
-      padding: 0; /* Buang padding yang bikin lonjong */
-      justify-content: center; 
-    }
-    .lb-download span { display: none; /* Sembunyikan teks */ }
-    .lb-download svg { margin: 0; width: 20px; height: 20px; }
-  }
-
-
-
   /* ── QUOTE SECTION ── */
   .quote-section {
     text-align: center; padding: 7rem 2rem;
@@ -645,6 +621,69 @@
     font-size: 0.58rem; letter-spacing: 0.3em;
     color: var(--silver); text-transform: uppercase;
   }
+  
+    /* ── NAVIGASI ATAS GAYA LENCANA (FIXED & ANTI-GESER) ── */
+  .liquid-nav {
+    position: fixed !important;
+    top: 1.5rem !important;
+    right: 1.5rem !important;
+    z-index: 9999 !important;
+    display: flex;
+    gap: 0.8rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .nav-badge {
+    padding: 0.4rem 1.2rem;
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: 999px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--gold-light);
+    background: rgba(18, 16, 30, 0.7);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .nav-badge:hover {
+    background: rgba(201,168,76,0.15);
+    border-color: var(--gold);
+  }
+
+  .bug-badge { color: var(--rose); border-color: rgba(232,116,138,0.4); }
+  .bug-badge:hover { background: rgba(232,116,138,0.15); border-color: var(--rose); }
+
+    /* ── PENGATURAN KHUSUS HP (ANTI-GESER, KURSOR AMAN & LIGHTBOX RAPI) ── */
+  @media (max-width: 768px) {
+    /* Matikan Kursor Titik Kuning di HP */
+    .cursor, .cursor-trail { display: none !important; }
+    body, a, button, .gallery-item { cursor: auto !important; }
+
+    /* Navigasi Lencana */
+    .liquid-nav {
+      top: 1rem !important;
+      right: 1rem !important;
+    }
+    .nav-badge {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+    }
+
+    /* Merapikan Pop-up Foto & Tombol Simpan */
+    .lb-nav { width: 40px; height: 40px; display: flex; background: rgba(18,16,30,0.4); border: none; }
+    .lb-prev { left: 0.5rem; }
+    .lb-next { right: 0.5rem; }
+    .lb-close { top: 1rem; right: 1rem; width: 40px; height: 40px; }
+    .lb-download { top: 1rem; left: 1rem; width: 40px; height: 40px; padding: 0; justify-content: center; }
+    .lb-download span { display: none; }
+    .lb-download svg { margin: 0; width: 20px; height: 20px; }
+  }
+
 </style>
 </head>
 <body>
@@ -692,7 +731,7 @@
       <span class="badge">MPLB</span>
     </div>
   </div>
-
+  
   <div class="scroll-cue">
     <span>Gulir</span>
     <div class="scroll-arrow"></div>
@@ -720,7 +759,7 @@
 </div>
 
 <!-- ── QUOTE ── -->
-<section class="quote-section reveal">
+<section id="quoteSection" class="quote-section reveal">
   <div class="quote-bg-text">XI</div>
   <blockquote>
     <p>"Setiap akhir adalah awal yang baru — dan setiap pertemuan menyisakan jejak yang tak terhapus oleh waktu."</p>
@@ -804,6 +843,7 @@
 // Format: tambahkan objek { id: "FILE_ID_GDRIVE", jurusan: "TITL"/"TKRO"/"MPLB" }
 // Cara dapat FILE_ID: buka foto di Drive → klik kanan → Bagikan → salin link
 // Link: https://drive.google.com/file/d/FILE_ID/view  → ambil bagian FILE_ID
+
 
 const PHOTOS = [
   { id: "1089mtXYEVUKwzOTww5Bzc54l0yHeUcB8", jurusan: "Momen" },
@@ -1036,7 +1076,174 @@ const PHOTOS = [
   { id: "1ydXXi-gglTeBdb5sM7QraVsiNXN7iNY9", jurusan: "Momen" },
   { id: "102eWeXwxhzwvuAErKCi8fhgaItbO17QA", jurusan: "Momen" },
   { id: "11pFRbnF_7tVstWLdgx7R-Cbu3Mpsg7Fe", jurusan: "Momen" },
-    { id: "1s-aPFfd2r80iZ167yx5-wPEbfMaNNjLH", jurusan: "Momen" },
+  { id: "1WZQF0Vq0xamZuYC297jhFQtbKJp4zzny", jurusan: "Momen" },
+  { id: "1eKX0eGByCVFpEyEtvVfAhye5EYjTMimQ", jurusan: "Momen" },
+  { id: "1f-nCR3Hp1YbWAhQDqxptqU3HUXxfugWm", jurusan: "Momen" },
+  { id: "1XwOzLF2srQXMx_A15HmHRSG6vjtFHxTv", jurusan: "Momen" },
+  { id: "1Zozv7_OJcOGsQOPki7sX4G1oJwqEHtVX", jurusan: "Momen" },
+  { id: "1y05D2KM1FgMrgpzNE8bzqnMG3QT1TpE3", jurusan: "Momen" },
+  { id: "1-9WEtJhJ6ShZCFgCi484PYvN_59QlYWa", jurusan: "Momen" },
+  { id: "101K1vdbB2z8EgvHlN7-2lk6EjiC5rcxn", jurusan: "Momen" },
+  { id: "1AmTWK5uaFI71RSVCZ0sCXwQec_8lfNW2", jurusan: "Momen" },
+  { id: "1JqFH9_XUnVhZj4h_3DGPDRILqMFSzu4e", jurusan: "Momen" },
+  { id: "1Kn7rRNNQGau48cz26vn2nq6I76SBnbby", jurusan: "Momen" },
+  { id: "1NJt6vrVS448wXh0fAb20XQcME78tHrax", jurusan: "Momen" },
+  { id: "1PhCvE8RPV_PpxVXNkU77jvnBYR0QDjKI", jurusan: "Momen" },
+  { id: "1cPfsdax4q7y7IIPUU5zFgS70sTm2aVZF", jurusan: "Momen" },
+  { id: "1nHzZY8JSJTXxmSaVC12JyFbtHcOEOY_n", jurusan: "Momen" },
+  { id: "1ub7OXp7HT3FP5iK6LlYdxQ65KqrzzAbC", jurusan: "Momen" },
+  { id: "1ux3DIJ0_zVWdJzQJ6fTrywbbSgztqPem", jurusan: "Momen" },
+  { id: "1vtJy7UCtwvwpKN7fwltQA9P3wbTN9Xlo", jurusan: "Momen" },
+  { id: "1zOGdC2CGUjfYTt5jZXtf9AkpbEu83zEG", jurusan: "Momen" },
+  { id: "12EyfWQzr-k6bnZvBhPf44AckJgkTYXYw", jurusan: "Momen" },
+  { id: "131zKhla63WBcI30zXZ_08WQsenTVIlBT", jurusan: "Momen" },
+  { id: "13p-lobwteNaI2C-P59xZ4n8YpuTEza1L", jurusan: "Momen" },
+  { id: "15xqTduK2d7q1cUsyDdwXzDZohr73YQUk", jurusan: "Momen" },
+  { id: "16ioCbp15mmSsYoSS1GTpJFnKFZSvPza1", jurusan: "Momen" },
+  { id: "17Njr3ntHRLpzQyNQkUcb4hNMq_FMgo4V", jurusan: "Momen" },
+  { id: "19cuuzJGGZys9laio4sexVmcOMOEh5HFC", jurusan: "Momen" },
+  { id: "19sFaSxX-5eYOUf6gT31v_pXbTTWDtgTl", jurusan: "Momen" },
+  { id: "1A-8ki4fU399mqcUN52cc5ndAg-mAkUDV", jurusan: "Momen" },
+  { id: "1HAsnq3Ljl-wvyUlghpaR9eU2S8cbZYuK", jurusan: "Momen" },
+  { id: "1HYX0WGW9EC-nIlXp8BmUmLTlLUqfY7eu", jurusan: "Momen" },
+  { id: "1J06YRAB_p6E_7TC220-0yXZ0mOZBwP1h", jurusan: "Momen" },
+  { id: "1K-ryzvDuWoKCGWYo9T2fqwvIs05A-fQ_", jurusan: "Momen" },
+  { id: "1LNZ_NYRY25lrfR5AcI9_LA5naSaLLYUN", jurusan: "Momen" },
+  { id: "1SLAxpaxnEig8YqT3uCLhmQ5YCbo9O-cL", jurusan: "Momen" },
+  { id: "1TTJmh3fTylSfgsUdXeXeNePXk0Fn_Y_K", jurusan: "Momen" },
+  { id: "1W6sM6pQqLaXufm-lw9rEMr9Yp7XeCes7", jurusan: "Momen" },
+  { id: "1YAwR8WWJwrVZAKFgdNlPFAW90SahzXSX", jurusan: "Momen" },
+  { id: "1YsrxRB-sKwqgUcQ9XWwYitGNOJAPYJhh", jurusan: "Momen" },
+  { id: "1ZloGY3rHZJVOl3wcG9PkUdgruvb1uXN6", jurusan: "Momen" },
+  { id: "1_NorP1SOaKszNE20ItEIHEDsky5jwj7J", jurusan: "Momen" },
+  { id: "1_z7JdzDzdJMzsRtngxBAgbIcY45KwYRi", jurusan: "Momen" },
+  { id: "1bAGx1ZLoKAn9LHTrlQoa9cMCKYkymTQZ", jurusan: "Momen" },
+  { id: "1bOwT2lVZOo-d3k1pzsWi185MeqIJQsLL", jurusan: "Momen" },
+  { id: "1cPROeWecqcif6kGYuYxHX5uevHuStb5D", jurusan: "Momen" },
+  { id: "1cRv9j4DTj0OFISx5DXWPYyCe8t4ziAp3", jurusan: "Momen" },
+  { id: "1e5uqoOAxlpWN5BgJTFO--eKxx58a7N1c", jurusan: "Momen" },
+  { id: "1eGdplyBpToB62Sfq6z1blYUjRm2e5ITB", jurusan: "Momen" },
+  { id: "1gBHj1fw27tZtfOXTs2VTXfvzdUecSkGC", jurusan: "Momen" },
+  { id: "1iY_RCoBfJ5j5TDb3tO2oYnvRJ7T3ZzcW", jurusan: "Momen" },
+  { id: "1k9W8TEkW4meZiI5-ksGfH3oyO66aqiir", jurusan: "Momen" },
+  { id: "1kV-VjGXWKJ_yPg0PN-ncGyMVk1K6J4i9", jurusan: "Momen" },
+  { id: "1krx7iHs3yeNe82DLjo8P029dSCi7gDNw", jurusan: "Momen" },
+  { id: "1kzbJFKAT6KkhAXYVUKF8rVd1_UzYu0ZG", jurusan: "Momen" },
+  { id: "1lYrfTmur1OGyvlO4G8XZ4SJsdE7-Ybpz", jurusan: "Momen" },
+  { id: "1lqFehgQPV4Vb4IUgVsPBBuBZu8TW5ag-", jurusan: "Momen" },
+  { id: "1mTdJwaec5B2AEr784S-xoXVsDWE_5qeV", jurusan: "Momen" },
+  { id: "1n9xWpEXtF2pRni_aF309_Ril6Az6W1zG", jurusan: "Momen" },
+  { id: "1ng8GV1E_8zGWlWtgqGnNTewkWFLmH_BU", jurusan: "Momen" },
+  { id: "1ngHSVVepdTaf3HB0T4_ZMC7DasRCcJNa", jurusan: "Momen" },
+  { id: "1p0ma6uGTHACuUawm568yK6X9lAedIq0-", jurusan: "Momen" },
+  { id: "1reYMYFFSz7_c0R5F_kNVO11HkXgnBkJs", jurusan: "Momen" },
+  { id: "1sSjkB4LSePWzene-y_QmPjUHMGe2peJC", jurusan: "Momen" },
+  { id: "1sZl8P9cr-sOoTyVR6rAV29_GcWQhOr0B", jurusan: "Momen" },
+  { id: "1urS2BJnXHZod6q2hzkokSwKLD3pXf1z3", jurusan: "Momen" },
+  { id: "1voCBlcmKInB2e6YE-fSgmpExtyqiVu9m", jurusan: "Momen" },
+  { id: "1w2JmUMY_33vebFTZKSJVIapu3frzQ_BS", jurusan: "Momen" },
+  { id: "1wLWOzq2dsiVUt5si6XgOVsBUk5fAklw8", jurusan: "Momen" },
+  { id: "1x8px76bEla0YkW4GVBQhBcas0CW6_1qH", jurusan: "Momen" },
+  { id: "1yJ64tV74Ix7J2qn3Y9yTwJsUVkR-Hcr4", jurusan: "Momen" },
+  { id: "1zu8jlKdyNh6Bwhkdsw7D3rVU5H7vi2rH", jurusan: "Momen" },
+  { id: "11EQoM_2gbGIMdQ84tnjvQKxx5DBjG7Mo", jurusan: "Momen" },
+  { id: "1G2B7tzJT5f81HtEGwmYilpG_mJbd1Wnb", jurusan: "Momen" },
+  { id: "1J7L4dYV0HdegBHzg2jJUIp7dxcwt4Mfn", jurusan: "Momen" },
+  { id: "1MtOqzTFnd8SrEffU2fhPpBHCYGJNLaSa", jurusan: "Momen" },
+  { id: "1NLGUx7w_L3aEbppwkP71s2iWCMbB8njQ", jurusan: "Momen" },
+  { id: "1NNpd290rokrz_nJ9rCbqf0P-RjgCKkKr", jurusan: "Momen" },
+  { id: "1O7jeBuE55BAyjp1kH9-MFMbHxYwI45pn", jurusan: "Momen" },
+  { id: "1Z6hc4ZpYwC2B_c4HKK4WWCrp5Wo769ok", jurusan: "Momen" },
+  { id: "1aPsVxxXnf0NaKYBD_U_9c7l0wsM8Sgoj", jurusan: "Momen" },
+  { id: "1e8xbxMsjSbxGwq_9Uc_umDcrbfIIRr67", jurusan: "Momen" },
+  { id: "1mNfUpL9Vt99-8DOgZ4_huU5-QMGlU3Uk", jurusan: "Momen" },
+  { id: "1pTV66wOWG7p7IvS5C8ZEhApJq9tgwI1b", jurusan: "Momen" },
+  { id: "1zRZvqk6ndnA5sr1fOx6u_Vte1pG8_l8T", jurusan: "Momen" },
+  { id: "1-BL5omcBrYdwjBOgTP5AxNaClayvw6m8", jurusan: "Momen" },
+  { id: "1-c3CMP670pI1HloIdbxMsIDjns0MzDcC", jurusan: "Momen" },
+  { id: "10g_IVw1v9mOA2NAskO1ywXpGEVBuu0Pu", jurusan: "Momen" },
+  { id: "11GyDldIFHeVR1nMhweb3Vv_ayDoDnV_j", jurusan: "Momen" },
+  { id: "11KWObsJ6mRyTEtutWolv7srKY7267Jzt", jurusan: "Momen" },
+  { id: "11VeYThd4_WIaV3Nj8dtEqVfr0Zt-xLL7", jurusan: "Momen" },
+  { id: "11tD8ch4pKvjhlk2b65CxDv3a7b073PlY", jurusan: "Momen" },
+  { id: "12Ss2kZ0HZd0VFvcMUoWcPiidoTpjy056", jurusan: "Momen" },
+  { id: "12yilcSkSS1tWuX9KrThg_mls87CiAYj4", jurusan: "Momen" },
+  { id: "14A_nY-5542yuAiKVl7xiWiUntoqhUf3D", jurusan: "Momen" },
+  { id: "14xXS9SAIHZGY0-xs9aGEaBT8-a6YXR-u", jurusan: "Momen" },
+  { id: "14yOOVXBES0MSfsjuga0_P8NLCPpfR-JK", jurusan: "Momen" },
+  { id: "15mwHVNUNMlm4FV389eOyvr4kKPGkm8Nc", jurusan: "Momen" },
+  { id: "16fHTR6lrKZZ10WWE9XNFWFLOwjFmbp-6", jurusan: "Momen" },
+  { id: "19Oe97ohIxsvvOplVN8SY1Q4pm8jsT9bF", jurusan: "Momen" },
+  { id: "19i2QZVSaZFy2mC5T_rMYc9OMuH-9GW_E", jurusan: "Momen" },
+  { id: "1A-NQEIwRr4Z_UFcIcXfwsElW_4KKup9p", jurusan: "Momen" },
+  { id: "1A9oZP24a43Tw8YGt_n4RSbLhJWHUVqK1", jurusan: "Momen" },
+  { id: "1AsVruYHpfebtmwA1G92qADh8Q-IH2DUc", jurusan: "Momen" },
+  { id: "1BfGbQUTgvYoz3U8ZwwVWcZCd0DJBus8z", jurusan: "Momen" },
+  { id: "1DHG-uyhFK_cQSN2_qImLejrPwxn1nKrl", jurusan: "Momen" },
+  { id: "1DmWXLMeJoID9Y9bjajd0FvW5tvxsJFnJ", jurusan: "Momen" },
+  { id: "1FXR-0ps_csBoMoVh67o78kw9gVaCqMBJ", jurusan: "Momen" },
+  { id: "1FoAgtIvui0yxbah6tVytcGRY-v0rXvfO", jurusan: "Momen" },
+  { id: "1GbZQfep7OBs1pB3nXu6ntuoPE-vAVAH1", jurusan: "Momen" },
+  { id: "1GgzrHGXN81hFF5mitOifR4X8VHmNfkoo", jurusan: "Momen" },
+  { id: "1H9iQ0k51YnqKcDnaveldpERetVy7CYdV", jurusan: "Momen" },
+  { id: "1HFBx_crnok0r4xYjCERTJXSzgUD8zdIc", jurusan: "Momen" },
+  { id: "1IAZu06sVPqmEjEhiPUrnF1uXituzaNVg", jurusan: "Momen" },
+  { id: "1J68iA3QGWdCv2IUha4vbdjCviiuHbLo5", jurusan: "Momen" },
+  { id: "1JjpQcLtPRrdsJsH8lb1JvvM6vMQwM34s", jurusan: "Momen" },
+  { id: "1Kkcp_BU2Aq7f9mfennV1i0li2iSvwm7m", jurusan: "Momen" },
+  { id: "1L1fYzn0UPxsqNHMsPrx8KBSwhIBDYuM5", jurusan: "Momen" },
+  { id: "1LPdaOXEKu50pfx0-LvLphEIQT2JcGo_7", jurusan: "Momen" },
+  { id: "1LQlI1lNXKjNQEjSMYzwX6E0ypF0E1D2d", jurusan: "Momen" },
+  { id: "1LoC0PcqBIdqBI-37DSvqs-hD3TcIV1b4", jurusan: "Momen" },
+  { id: "1MrLbMZLxvNMOht618gJQfI-gmpb7Rl_c", jurusan: "Momen" },
+  { id: "1PVrocD1c7XHqxE5zZIaYssQvRJzAD_sJ", jurusan: "Momen" },
+  { id: "1Q2GYpz7w77B4nKhr1QALLi_C221WJHWY", jurusan: "Momen" },
+  { id: "1QPXbV_CvzwRanG1ugeiA9RYv4Q-iMiSM", jurusan: "Momen" },
+  { id: "1QRMKunmzclZXYQK82aJ7MXm604O9Mygu", jurusan: "Momen" },
+  { id: "1SJGErhjMToANI4vr3x9uZ4DHJH_K7MAz", jurusan: "Momen" },
+  { id: "1UxCyKrATHWdj9oD-a5i1xjAUYFDqaFFu", jurusan: "Momen" },
+  { id: "1WwnFmyW87IaPjkWZiAA8ofEstxItuiTh", jurusan: "Momen" },
+  { id: "1XtuGTrQPWFlJQ8xIOC4viAviaEy8X1jG", jurusan: "Momen" },
+  { id: "1Zi34cWIJ3Z3hh0IN1RrkhqdZW15p4Ntb", jurusan: "Momen" },
+  { id: "1_KRkMuOB7lQeL_TEZ6GZn36DhdNNNUwd", jurusan: "Momen" },
+  { id: "1cJk6Jkxwte_kHY3wMuB9qfEyor951mTS", jurusan: "Momen" },
+  { id: "1d3PvXUKfw3DM1ch3S8q9xb2KbTk4kOkU", jurusan: "Momen" },
+  { id: "1dIJZA3POn8t-AoO9L3BhSUkOEev3sw48", jurusan: "Momen" },
+  { id: "1doO5kLW8BE7JAQJnuMMPfQUdQYRLPU87", jurusan: "Momen" },
+  { id: "1g5ZsgO5v5RbQf0z4OlE57EUKvOvXKv3m", jurusan: "Momen" },
+  { id: "1m0RHck5otJU5nz1-2smjp1IBS6YgVA-p", jurusan: "Momen" },
+  { id: "1mBF4rkgdJ2UccNKwZ-s7NiQFyP4K7k2x", jurusan: "Momen" },
+  { id: "1rV7ZDmSfKQBW5X94SUSkWPgBKivh3Mat", jurusan: "Momen" },
+  { id: "1sxS8ZIRux-k0FDmGiOmR5nyP_OyrbMBv", jurusan: "Momen" },
+  { id: "1t4yCmLM9Kn8wn-0GSJb7rrChWR1i3IAI", jurusan: "Momen" },
+  { id: "1uE1lT8jgObzVOe-ZZlXsanEcmBfd31VH", jurusan: "Momen" },
+  { id: "1vB7lM0vcF5vBZsvB55kKF9u3Cnvo9anY", jurusan: "Momen" },
+  { id: "1v_c0LNSQyLYWRQ8qKmKFaT83DOJxviZn", jurusan: "Momen" },
+  { id: "1xf_F91obQuEKemZws8TsFQButs2sKeDi", jurusan: "Momen" },
+  { id: "1yBtbAG08PkAwriBqlfhBsBU9-IXRVR2q", jurusan: "Momen" },
+  { id: "1yZ9UudhwBcBfgnPmKRpD1hEcihWq-rja", jurusan: "Momen" },
+  { id: "1zSVLSjRnElGc6iW_xY-xkd2Uf2y64DOk", jurusan: "Momen" },
+  { id: "100RfDltwn06OJ8Ao9rzxAKLFuL-Vpp40", jurusan: "Momen" },
+  { id: "11Z6AFuorLlufDgIPaOiCvF-kOy-uh4H3", jurusan: "Momen" },
+  { id: "12kzx3GUqGbRDaqx651wpHfcLIyzBmAmJ", jurusan: "Momen" },
+  { id: "14H_2xXCgeDJ9MZ5nq38vtL_bwLPaSMcZ", jurusan: "Momen" },
+  { id: "18_FV6xSiB6Fpn3GNdAM_1Xfn8sCjrIZu", jurusan: "Momen" },
+  { id: "1AG-24Qlr--86mtALh1yTAhne-8nrrtWw", jurusan: "Momen" },
+  { id: "1BgMM7N0dxERaOHnBkXjlgE8AfvwicSG5", jurusan: "Momen" },
+  { id: "1FU_K4uO7ojTfWPmTxbIQuVEOco7nwoc3", jurusan: "Momen" },
+  { id: "1IpqAp4ld2FAmNJxex777lhaOjGLr1O6X", jurusan: "Momen" },
+  { id: "1M2cxWfsdd65sFakDcDMh8TPCn3a6fRP8", jurusan: "Momen" },
+  { id: "1OTX8g5VnFIh9s8hWV5zuzx-_Sm0RfPZh", jurusan: "Momen" },
+  { id: "1Pgin2g_NC5MBiaNPUtBqtfQTQq28scEs", jurusan: "Momen" },
+  { id: "1RnDirCWV2yQg2lgrhOci-3DkwjevXks-", jurusan: "Momen" },
+  { id: "1VZivcXdIqw3L13W84gzHafqetWpKnLUs", jurusan: "Momen" },
+  { id: "1VqJma8JSbzXj0QrBqjG-TwQYsyl59W82", jurusan: "Momen" },
+  { id: "1XKATs7h-AIQWmtUQi_jcx6CS0aPpSM1e", jurusan: "Momen" },
+  { id: "1XiDriztfzCLcnTcu70X-r5R2LWfF818t", jurusan: "Momen" },
+  { id: "1dLEVvVzZVu0_5_kMhbtrkN0KftyvvHu9", jurusan: "Momen" },
+  { id: "1jYi_krjuZg9kzU9lKnLLgNkhk80AZQjL", jurusan: "Momen" },
+  { id: "1mTTvXuKf-SrPdkrNwyTtECDACajtFYul", jurusan: "Momen" },
+  { id: "1s-aPFfd2r80iZ167yx5-wPEbfMaNNjLH", jurusan: "Momen" },
   { id: "1xzJhGm-r_foiBlg6qWqVOAn-XElSOP_M", jurusan: "Momen" },
   { id: "1zEMR78Gg8gXVxM_fBUhE6FTLzcPcLEkS", jurusan: "Momen" },
   { id: "10wIgnZnJoYqF5P6U3hJ7NtgXdiOweq47", jurusan: "Momen" },
@@ -1148,6 +1355,176 @@ const PHOTOS = [
   { id: "10_w3zy6Kvcya7zkrmADae2_g3JNWK-bX", jurusan: "Momen" },
   { id: "12A1BptZtMvfeMf8EjTQnMHCLVBdEk9ec", jurusan: "Momen" },
   { id: "17JEzE48QadvwvSk7-YMlccoUAVi9qSr3", jurusan: "Momen" },
+  { id: "17TWiHNhjPq0V4QajoCXZtj2GqhG4b5jh", jurusan: "Momen" },
+  { id: "17gAKpfDutbBN07WruauFA2djdXJXK0bH", jurusan: "Momen" },
+  { id: "18UVAOPq3GAJDnHrdPFScfrwgOAz_4bit", jurusan: "Momen" },
+  { id: "18zfpj_tcUAo74M5ozu2ne0K0c1P8kJae", jurusan: "Momen" },
+  { id: "19A8uMJOBO_j65z2IwcpAe4kI5a5sRLsK", jurusan: "Momen" },
+  { id: "19RUNXNqYtS7AqslxwmM6KdSRWRMsf0Lw", jurusan: "Momen" },
+  { id: "1AgrVet8r3Ejlw-U7GLTitTqfJrIOky91", jurusan: "Momen" },
+  { id: "1AxlWVymRtZjEQoYo5vqSSveof_MYTgDj", jurusan: "Momen" },
+  { id: "1BHDA5Zc-9JO1f-RLEfjiXRaLEyh1aAfP", jurusan: "Momen" },
+  { id: "1Bh7H0DbwF_6WCFGzeQ1qTiirQA9K1v2l", jurusan: "Momen" },
+  { id: "1CLvZKcSrMbirzVsDOYLhJ0eb3s_hHdg4", jurusan: "Momen" },
+  { id: "1FfiJhVGqlEKIuRRQ-c91jOZ-u4SFmnhm", jurusan: "Momen" },
+  { id: "1GRHvH_wktS3lFVEKlUDeX_SF8OcqX3cm", jurusan: "Momen" },
+  { id: "1GVv4deWzHM6FJEoljWYlP35qS4IQSJeP", jurusan: "Momen" },
+  { id: "1Ivoed25xrfOAahxz75ijV0AGPPmITydf", jurusan: "Momen" },
+  { id: "1L0NoSRiO5EC_K60rSaobX_tCcdlEwD5Z", jurusan: "Momen" },
+  { id: "1LBM-mBki_DqdowNaxshdXyzdEWo58znm", jurusan: "Momen" },
+  { id: "1Mud3mPfJ8jpPxD3cxgDNJda-6UaJAap-", jurusan: "Momen" },
+  { id: "1Nsqj-acMEjRv4LZzS1-NI4-XktAmQUuZ", jurusan: "Momen" },
+  { id: "1ONARlYrdViX1LifCxdeZKjxG9wfus5Ec", jurusan: "Momen" },
+  { id: "1ORpaZ2OofviUxLbrDJ4wighxadU9ylwi", jurusan: "Momen" },
+  { id: "1O_4m3uhyYaBjE2fCCHQl_zLjBEJf1ysd", jurusan: "Momen" },
+  { id: "1PSSWSRMSchWObfLUIp3fUg-qrd45qrch", jurusan: "Momen" },
+  { id: "1Q7plZjB4BevdH9yhne4dZOAJorrwiVFK", jurusan: "Momen" },
+  { id: "1QAxZkuOel3663SG6XTFOP4Eg4ZuhQz8d", jurusan: "Momen" },
+  { id: "1ROBY8ovS8-djHi-0ELwuZsWu700dC_TO", jurusan: "Momen" },
+  { id: "1RpugMI2j3IXHWpjeXnnylzaSzK44a0tJ", jurusan: "Momen" },
+  { id: "1SH2Lokmf0q0I8weUKXPgWBfw9PccA2Lt", jurusan: "Momen" },
+  { id: "1SKQ7m76kaE3tTLz4I2va3BLqUDc-IaRa", jurusan: "Momen" },
+  { id: "1TRYV8xkn0Evb-5TEutHYT80kxoNVPE5m", jurusan: "Momen" },
+  { id: "1V-pWyaE2cpBvdtZYjZtb_WFlkcZG_62J", jurusan: "Momen" },
+  { id: "1V2Uh-zmVUNYeXoqZ_C-6lw3DMeXI7-l3", jurusan: "Momen" },
+  { id: "1VoOvwT9nt_SylVAigbEzx9v2ef3m6Gxe", jurusan: "Momen" },
+  { id: "1WNAulGa6-kBIZ2UVwDbyGbQuIloFTR06", jurusan: "Momen" },
+  { id: "1WdgjIf2DZhtzxZLJ8PHAe3YuvE5xdJBJ", jurusan: "Momen" },
+  { id: "1_e72A8hbZ1KaP1lSUnR5aiJt4nCfI4fy", jurusan: "Momen" },
+  { id: "1aSaK9EjcjAlJf0Tw9yPcIFD4AeMClrmS", jurusan: "Momen" },
+  { id: "1ac_uDX4Js57IfK0aNpQjw88uORoQM3Hf", jurusan: "Momen" },
+  { id: "1bcIFwkdKFefJE4MFKmhSyJ4ECijd0xr9", jurusan: "Momen" },
+  { id: "1cGowR8n59_ApcZrB4dXVbKSRjba7MD8k", jurusan: "Momen" },
+  { id: "1dALBhmBBLR7jjt9bMjrJ5s677Quqfc7s", jurusan: "Momen" },
+  { id: "1e2vsUp6LkL6d8l5d3lgoGS-B06E2KmEX", jurusan: "Momen" },
+  { id: "1gmPNYAx7jSs7FhLV4fzpDZEoUYMBkq75", jurusan: "Momen" },
+  { id: "1jC0mylIon9Wgvb_pQZ-rzlaq7xzsJ0Gk", jurusan: "Momen" },
+  { id: "1kQKDLc0M_H-vkI_NBpyGJ9HYW8YWCZwv", jurusan: "Momen" },
+  { id: "1l_Pr8p5aNOlzs6IWSLtwa2UaDEyxcbEg", jurusan: "Momen" },
+  { id: "1nn1_T5a09NX-oYl8iCLqd6mlBWb5Nts2", jurusan: "Momen" },
+  { id: "1oCgPkiJqK_VCiWC7OzovW9kq1PjP6Kyu", jurusan: "Momen" },
+  { id: "1oKtekbcFvdbmh0IO_xQ3jptJ5nWdyLlv", jurusan: "Momen" },
+  { id: "1p1q5FPMYrAQvYd1j8bkkA0slYemtNF8Y", jurusan: "Momen" },
+  { id: "1pfQv-kHw7SbE7ZvF_aYmBpIEgdftmxVG", jurusan: "Momen" },
+  { id: "1q-Ge6Ry7BopUqLbeS1nkzOV_rJCiv-fj", jurusan: "Momen" },
+  { id: "1qoaJ1eCm3b52-I3XJDkPN8RxPdrmX1bK", jurusan: "Momen" },
+  { id: "1r4HgPMIb7f563B-8fOcp-iwZODDcVkhO", jurusan: "Momen" },
+  { id: "1sRKJiMia8NTeh61bMOOaVUlr81KPHGVD", jurusan: "Momen" },
+  { id: "1seoATSM-HnjHfJDorLwvsscQGsYYu4pa", jurusan: "Momen" },
+  { id: "1svnnJ60GBAprc83pVPjCrni3WBz_WtJX", jurusan: "Momen" },
+  { id: "1vHYJ6IdXFrXXzXKOEDAjN2h0ZbZn5cUW", jurusan: "Momen" },
+  { id: "1xDWz-aQnndXVBcMnYzz9KRzVg4eAAkCc", jurusan: "Momen" },
+  { id: "1yzSFYWY4fsBYcSWlHSzCRoKpYRQyl7r1", jurusan: "Momen" },
+  { id: "1-MYlLnf0woCbccFDeUotfQGVJ51rn50E", jurusan: "Momen" },
+  { id: "11l-Uzc7W8LhZcxZ-YCDDloi4bF9pZSgE", jurusan: "Momen" },
+  { id: "126wuAbalmwjePY0zAZlofgtU0-FKm8N2", jurusan: "Momen" },
+  { id: "13JOs5NR2mOihxPNGiKm-viKXk5-xDQ2o", jurusan: "Momen" },
+  { id: "13vL8BFe2CXZ-nzZx-xWzfgHP_TR-2xcD", jurusan: "Momen" },
+  { id: "16rdT_2PanjMP0FkCmdVYj02ZtQ9VtvIr", jurusan: "Momen" },
+  { id: "17sxxXmhwjWILM2V9LPYLqIEDgnDveb7F", jurusan: "Momen" },
+  { id: "184OYBtf9hMcUlPlBRwYUsgvqlVRsucH8", jurusan: "Momen" },
+  { id: "1B7IReZoWu05GdGCaYssDRTKb3DecV-v1", jurusan: "Momen" },
+  { id: "1Cqv8F0SYhSMLn8YWp_OItrZfPNja5Y5S", jurusan: "Momen" },
+  { id: "1GKpyo67_wGoUjBN1dJrwU-qzehtpif0E", jurusan: "Momen" },
+  { id: "1I9K49p_3Yf74cJqAKfh9iUB47jZCbICl", jurusan: "Momen" },
+  { id: "1K52HFIRAd1f2NLjwMXhtmlz2QjhcdQu5", jurusan: "Momen" },
+  { id: "1N-6JV10AOWWAPoe8W1560isEdnbDjdSn", jurusan: "Momen" },
+  { id: "1N5WosWnlN1MCx-Zoi9BkWs_wh8Vbj60u", jurusan: "Momen" },
+  { id: "1N6IzYSMCeKQysG1lXaVcNHaziJ0x_15_", jurusan: "Momen" },
+  { id: "1P93yfFtZGjWPXEUnmIjJiwUVG3W9sS-P", jurusan: "Momen" },
+  { id: "1PEGk72TNWmWoHJgCTEoTJ7IHgX2GKBZt", jurusan: "Momen" },
+  { id: "1Rgg1X0VW4RU79DHdMVFYhl9ATj5UubeC", jurusan: "Momen" },
+  { id: "1TOttnwfTbiID5p8PoMhdFbZqo5FXuEPT", jurusan: "Momen" },
+  { id: "1WL3cNIjcukhH50cAm0-JIdZLZwXitzhJ", jurusan: "Momen" },
+  { id: "1XD6ymA6DHvscSo9CgNBTdcnIhJRiU5yS", jurusan: "Momen" },
+  { id: "1X_370eHlPed-PPWPl-iU4a2m5Po4cup0", jurusan: "Momen" },
+  { id: "1YtJfUSpqfh4I6OvB3aj0m9W4w-8UDNyy", jurusan: "Momen" },
+  { id: "1i6LZXO49rnLzUxDzklNZQRPLjXGcSqlz", jurusan: "Momen" },
+  { id: "1iDjccoYPSm3rHztRhlYAYxgvd188KE11", jurusan: "Momen" },
+  { id: "1lGa57lnLhMMR7cMFecRD6_dNBmZpn7AA", jurusan: "Momen" },
+  { id: "1oP4MDRrwUiGFtnzXWd-hcA0cz7lE_KlF", jurusan: "Momen" },
+  { id: "1p8Websh2U_qMGNa9sLyP8nF7Gi5IPt7e", jurusan: "Momen" },
+  { id: "1s7fU_ty6ewxA0_LOdbfKxVgxNdU1Z7a-", jurusan: "Momen" },
+  { id: "1uVyTyIePPiDgdPU0vsh_DOyQYf3vsOFv", jurusan: "Momen" },
+  { id: "115MaIS59cB16sS7FzDtsrCcma8mSi-65", jurusan: "Momen" },
+  { id: "13GsciC9IRHqDsWCYEJWOuUcCrTOKsQmX", jurusan: "Momen" },
+  { id: "14Q_UTUc7ZslKPTbuFXoGnSKSuypQ-TGj", jurusan: "Momen" },
+  { id: "17-jEqbkyMAOo17ZatAK8MnEn7IwIPcDV", jurusan: "Momen" },
+  { id: "18wX5rfxWkCaJL47iiZZqEyfF16yc7DCD", jurusan: "Momen" },
+  { id: "195Qczg9OVzSp1q5wmDvDYyWYM0W670_Y", jurusan: "Momen" },
+  { id: "1BOkdsY2aq94u1FMkyVuY2Ui0yK4vMIKB", jurusan: "Momen" },
+  { id: "1C-QDvFBFVZiUNO67LoAQFOK9Fw1atqg6", jurusan: "Momen" },
+  { id: "1CempsFEqQDG7_LzaK4EHjE6GRivTWUR3", jurusan: "Momen" },
+  { id: "1ET9tYiotgDFBu74hn1oY6HrGPbpZ1JUl", jurusan: "Momen" },
+  { id: "1I4aYEcceM0eDxw1GAGIMLmB1zoDJ7tDl", jurusan: "Momen" },
+  { id: "1I6MVsWDEQSiiYEFcpnuJ_Mq4bM1MX0Nt", jurusan: "Momen" },
+  { id: "1JqJtGDdOGko-m2ZN6rCjC18r_ZhMdlLQ", jurusan: "Momen" },
+  { id: "1M0HYuqTumV6Rcl7et_uQETogv9GMbfWv", jurusan: "Momen" },
+  { id: "1NStV8A4ovQLEHffLDlpnvT-7PQJVpgRJ", jurusan: "Momen" },
+  { id: "1NtFWEdxP7pUZH_-taT_sHq1TjHLLH8VJ", jurusan: "Momen" },
+  { id: "1ObF5TMz6pESiqpPeRTqJoVLELdrW1XNq", jurusan: "Momen" },
+  { id: "1P8XGSuGuw7jJEnmdkmRFMqtNmQQ3SGp9", jurusan: "Momen" },
+  { id: "1RqFd2CfWDOCiEo0x4BWGC_NkbVOPNcb9", jurusan: "Momen" },
+  { id: "1VTvYQd6HjFljQeqih0cGHyEpu2DQ2eWO", jurusan: "Momen" },
+  { id: "1XIgVGu9LBpxcSTC7Ub4hWQLpy4W94KjX", jurusan: "Momen" },
+  { id: "1XgalNympq8ot0jNZyRwlcOsqPXQa1Nnr", jurusan: "Momen" },
+  { id: "1Xn4a3o94BdqEMctep_K3oiIttxA-N1TI", jurusan: "Momen" },
+  { id: "1ZNBS-h9ZNoljpCKaDp0T7g3vnq6TrxcD", jurusan: "Momen" },
+  { id: "1ZmCanwAM-l2JgKFrBDu1ILnqUA_88Mdm", jurusan: "Momen" },
+  { id: "1b4Sl4fS62XVat4vmuxmeoXJk3d6Z1LGg", jurusan: "Momen" },
+  { id: "1e7k5-SlDXT9Fm1ZzQviOty24wE5RuP_u", jurusan: "Momen" },
+  { id: "1hj-0lpZkPprVlAgc0Gk5KMfvWNPl9z1_", jurusan: "Momen" },
+  { id: "1lR4_PhFicyYqagqL8VPjMiab0SzVnVjV", jurusan: "Momen" },
+  { id: "1oxKu_vtizkL1mxjswT77qeL0nitcYmrX", jurusan: "Momen" },
+  { id: "1u3CmncnXGjyHl6vzRNKnUcT4MVKk_iIs", jurusan: "Momen" },
+  { id: "1ysE0fPpg5soFQn9xwfm233ZTD13oM2zM", jurusan: "Momen" },
+  { id: "1yw4RDJwwflcu2c8jag3mMjGsqC3D5L9P", jurusan: "Momen" },
+  { id: "1-UczHQub6ik0DMiIEHeVskn592WyEEHz", jurusan: "Momen" },
+  { id: "12FJvVdj6xWZIdPRhByQiQ4tO8oUYb9EG", jurusan: "Momen" },
+  { id: "13AXohcmOt3ueIoCMWVJ9tKi1FHomIR5K", jurusan: "Momen" },
+  { id: "13JhxalGGGA3gGAOTcD52_QsBeEryPCsM", jurusan: "Momen" },
+  { id: "13bMJrX1NunJrPXuHbww6LTNhLr_kB6Zy", jurusan: "Momen" },
+  { id: "14vdNbFycYYOzJwytWKZ4id7dggSvcEXj", jurusan: "Momen" },
+  { id: "158TIQdJMOz9YcZx0iD_h4yGZaej3ro8p", jurusan: "Momen" },
+  { id: "166jJrqe-uqO4fzVG7nO3_o7jV8nKKjqG", jurusan: "Momen" },
+  { id: "168H289qQIufPA9Q84VX8dYltFzQ5dljy", jurusan: "Momen" },
+  { id: "168NzedpnnaNjNj_mHWNLWp5XTN4nO8An", jurusan: "Momen" },
+  { id: "18OVgGQSrURwfClm-9uVgiaghrGgtwnHO", jurusan: "Momen" },
+  { id: "19KANdls5UtPALD5F5KlCEly8W4rANeXm", jurusan: "Momen" },
+  { id: "1BKeKNGDilZez8AMvj08ysFXipWYuigd2", jurusan: "Momen" },
+  { id: "1CbQeaPYEUsul2V_5BdEeqX7c8RGsDh22", jurusan: "Momen" },
+  { id: "1CsdfZ2ZmoIDpcB2ago4mooaeVViCFn9P", jurusan: "Momen" },
+  { id: "1CyR7iWLN3q8BRLmYC2ePtCkt8uEE8I22", jurusan: "Momen" },
+  { id: "1D5bcbpFJsLLQ7VCNfo_JbDcktWrpEoPn", jurusan: "Momen" },
+  { id: "1En67y4zNU11-H2PqNxH4pfCBn3Sn310G", jurusan: "Momen" },
+  { id: "1FdOEaJ8XSZYfr48DcA_3BxQxl4Ibydda", jurusan: "Momen" },
+  { id: "1GZSJVXS5igrANC_dxd1a2d9mlHcqVSxs", jurusan: "Momen" },
+  { id: "1GtqDGSbIqK7ElokY9mEWiR4lZgi8KhBE", jurusan: "Momen" },
+  { id: "1He-1AfI9cc-AwAcqg3I-HfoGZIdtP7nm", jurusan: "Momen" },
+  { id: "1I-6fYs5u8AKDH_OQv9ByML7ikH36uOej", jurusan: "Momen" },
+  { id: "1JMyC2cnhfHt4uvuBezTeV-_YrGUE6iPy", jurusan: "Momen" },
+  { id: "1M07GVI8dYEy2WittwaQvvskQXg1EzmVM", jurusan: "Momen" },
+  { id: "1Mm_aYdqoMBWHVP_k0JBWgGJCnQh88W95", jurusan: "Momen" },
+  { id: "1OrRPdJhvdsZQe2Xibhxn0qisCkL9uTR0", jurusan: "Momen" },
+  { id: "1PvpddhjlRdONl1eEWTcesqeSI61rb_04", jurusan: "Momen" },
+  { id: "1R6lkDWK4hkWLX7rbQwg2bGtwmuySFOk5", jurusan: "Momen" },
+  { id: "1UJAzDRQytiq4R65W-q5EkLJ6BxQ5PfpH", jurusan: "Momen" },
+  { id: "1V9bMDD-Oi-UYdmUQR5ShPD31W2GL_imd", jurusan: "Momen" },
+  { id: "1VYzsrUTBFmviFfR65dixYDOllZ5Vsoau", jurusan: "Momen" },
+  { id: "1VjXocBjluqKXAEnTUM4k0HuQHh1-WSg7", jurusan: "Momen" },
+  { id: "1XP6iFj99FfO2IeVo2J0t4D6C9yfxcM7c", jurusan: "Momen" },
+  { id: "1XUipTJ2jsxA4QeaXw-BSE6EdFQhlD7ue", jurusan: "Momen" },
+  { id: "1Xx3SmNkbzzm5D3KB3gVR_yn3VLYrofKh", jurusan: "Momen" },
+  { id: "1Y0yfr_WPIOH8iZ8VVsxuMyQ_p9TjNGYE", jurusan: "Momen" },
+  { id: "1_K1x2IM77O-nWD5zpPpxgsDfzHb8heQz", jurusan: "Momen" },
+  { id: "1_k0J8FvwnCFw8nNOZwXZODfY8jNoQbuI", jurusan: "Momen" },
+  { id: "1a2bT__KPRqeoPJdQGzd649pkJpc9YbCQ", jurusan: "Momen" },
+  { id: "1aIUh0P59CZKw3frmn940GVUIHLT2AxTj", jurusan: "Momen" },
+  { id: "1aLPYH7O0X0ZGCpudSEYKKg1T7AGfcwD9", jurusan: "Momen" },
+  { id: "1aqOwTUx295OfV40Eosb4d4v26O_fjG5H", jurusan: "Momen" },
+  { id: "1b2NYny6V1WcbBWEZrzdrO7BV_waqH6zF", jurusan: "Momen" },
+  { id: "1czBVFriMdTixbA7-w6mKBNCg8CT0V83Q", jurusan: "Momen" },
+  { id: "1eRKAG8dTihvYJAwd4LipQ07WLJhCPorh", jurusan: "Momen" },
   { id: "1fooVfsTM92qpOnO3RwwqS09PKIGJyyYX", jurusan: "Momen" },
   { id: "1iULm5oSsWNPuliBwESxZyblfHTvG92Px", jurusan: "Momen" },
   { id: "1kLBMUTeg4lhPG70y3nkfO6C_PodN7QK-", jurusan: "Momen" },
@@ -1403,6 +1780,227 @@ const PHOTOS = [
   { id: "163HGyFSxMHuLEqcA_emho2RZF_YUv9or", jurusan: "Momen" },
   { id: "18_Win9yKT9BLBZfgpA0Zpt3XqUj2Esm4", jurusan: "Momen" },
   { id: "1RGpPXk1c-ngVjI-XU5tNkUE-k6WZYfqu", jurusan: "Momen" },
+  { id: "1RX9ERwFdvYMTf4tMbJEMCTKEaQIjNliM", jurusan: "Momen" },
+  { id: "1T4NwlYWtxRwq8XePE1h7q4oeESMJX7ao", jurusan: "Momen" },
+  { id: "1Ty6jgOXfrk_rnOpFWYkFwSg_goO3d-s0", jurusan: "Momen" },
+  { id: "1Wxw9__DzX7EgFwmI13ADAXiTKMD5EgJX", jurusan: "Momen" },
+  { id: "1aPsQWlisjRLPEKSxAEzN1sTSgWkoWpFj", jurusan: "Momen" },
+  { id: "1bUYt4C0w6syQPc3rCo8Z4K1UZ5FhL5DA", jurusan: "Momen" },
+  { id: "1c0ZyLnwfPAj80wo7loH5p5tJ83DH85vm", jurusan: "Momen" },
+  { id: "1cXTeGi_51RGmSFZAbVMXJ-QzSWsqxX0n", jurusan: "Momen" },
+  { id: "1d_os8h3YRe_eVBnXu3crUmY3w7cV-AgF", jurusan: "Momen" },
+  { id: "1e76xLkwnMOUgrazqcc-KsMyK6pGsECqk", jurusan: "Momen" },
+  { id: "1ePWALf6GipMQShMtXmzOwtDOBWMFzgJV", jurusan: "Momen" },
+  { id: "1gdPfEZJGU5SDhYxBYSr2stLbTyiPAFga", jurusan: "Momen" },
+  { id: "1h6cjRTKmjfBA0bdV7F3W8FqKT8bFYQFo", jurusan: "Momen" },
+  { id: "1mJBC25coTiGuAdsypK_TUWvA0b3AtRIM", jurusan: "Momen" },
+  { id: "1pS-XOrg4VFX8OOnIPaTW0zEQQeaKHORD", jurusan: "Momen" },
+  { id: "1rESzKyNS8bm68i5IKoyUT2SjLEEhXqhT", jurusan: "Momen" },
+  { id: "1rWbXXcjhHX4alk5V4oGRnyBfhRpce7MH", jurusan: "Momen" },
+  { id: "1sGM4uvNaUjFdZeGA5nGHi-lkcgkAEjKz", jurusan: "Momen" },
+  { id: "1seG-4wbcrDc8XFsmpV1amFP9ijxmp1YZ", jurusan: "Momen" },
+  { id: "1vGOIvnwPK0P0OxRRT-j1lsDyfnktfZJV", jurusan: "Momen" },
+  { id: "1wE06YJPRK7SLSq51UCBrg3pZNGNdfuvL", jurusan: "Momen" },
+  { id: "1ygKDONc8rq1W6HVXDlJxPU67jYGcAnWr", jurusan: "Momen" },
+  { id: "168hjb0eWRgVWULsns_yvYea8tqCtz8fc", jurusan: "Momen" },
+  { id: "1A8YUwj4EHwQnAgG2j_OJewyLtbnXJxIN", jurusan: "Momen" },
+  { id: "1E1XIpZaii6rSQY_jEjju9IZ-CtF6MXw-", jurusan: "Momen" },
+  { id: "1EiSmJZSN8XiphgrZzhL-KQ5vHh6W2cVP", jurusan: "Momen" },
+  { id: "1L1oNqYXfy2aYFcoC0FQeCWTabtTVuLSJ", jurusan: "Momen" },
+  { id: "1LR9Hb3K5H5H4nLzYXVhJYiXoQfCM5Cs-", jurusan: "Momen" },
+  { id: "1PDyqhJA53AH4K99-_9xd4-hISBT6B5Pc", jurusan: "Momen" },
+  { id: "1TvOtIb531kP3GYuO4fMsiUIzbOsrCV5I", jurusan: "Momen" },
+  { id: "1XbEa3Mw_j9gXyyquoM0i5ugBdn1froAX", jurusan: "Momen" },
+  { id: "1Zdgcm8FyPrWRuiIqFV-NAT9TlPHWpKjd", jurusan: "Momen" },
+  { id: "1_f58zaxzfNEC5mhLPPzxGXBrCVqHp38z", jurusan: "Momen" },
+  { id: "1bggwL2wfP9DTQ2UxyDs10r_ZpemiVOiD", jurusan: "Momen" },
+  { id: "1dvHlcIGMTGXIfvOUDI83XXwCZ0I76SV0", jurusan: "Momen" },
+  { id: "1eyRD9hF90VQi1dZKcXKtkVyX-MWy5VRi", jurusan: "Momen" },
+  { id: "1-PCFFi8AH317ajxAIkDZiurEPZHK2i75", jurusan: "Momen" },
+  { id: "10R0gGJJpL0d4ji4OBZ6SBwjqMfNfEcvf", jurusan: "Momen" },
+  { id: "14pJhMSHBuc-RgGF-SsHAyJAq1OIdyklT", jurusan: "Momen" },
+  { id: "15G4LYlNpPDfJQ-QmFsUsgstCodN5ZIjU", jurusan: "Momen" },
+  { id: "19Ujr38WLV1f_YTy8Bocu0Pwhp8O4MSmU", jurusan: "Momen" },
+  { id: "1DyUoG8yAR7TMmAAJEANAun9ZDeqLyVgD", jurusan: "Momen" },
+  { id: "1EQhxikn-gApVCJqGxML3cFFP7d_nl0-5", jurusan: "Momen" },
+  { id: "1Ox6qSC82TZUl_LR38DEkdhiLZjSQWTf0", jurusan: "Momen" },
+  { id: "1TAF-L3HyjiVhe91Dv3EtmI33Qs_k4lYw", jurusan: "Momen" },
+  { id: "1cu7EsUHhsuy0TzEfsDpqvHc2fAivCM-A", jurusan: "Momen" },
+  { id: "1dq81o-9FZYQvGvg9pLPlmWOGgdF5if54", jurusan: "Momen" },
+  { id: "1jkwffXbeNyjywpS1qCTe0Ju0M2Xww7_Y", jurusan: "Momen" },
+  { id: "1kwVNJQ8g4g_ELer5zKtTejZiJYC8tZ1A", jurusan: "Momen" },
+  { id: "1sZ6KP-Ml-nuZUNJXfn59eWwi97H1-UGI", jurusan: "Momen" },
+  { id: "1svasYsuOG2iv8KK24BY2rV3dty6neWrK", jurusan: "Momen" },
+  { id: "1wVBra2zulNOP48JmO0EUTTt5a4Eb7AuN", jurusan: "Momen" },
+  { id: "1ygoLi1Q4j1C2WgYMIq6PombAP20YblQ5", jurusan: "Momen" },
+  { id: "1zCk9A7M9pg14UmsBlzl3hMxLQoL4sKPj", jurusan: "Momen" },
+  { id: "1H5mZ5fRV6wLKz2STSAc5IuHqfZdethXC", jurusan: "Momen" },
+  { id: "1MGsxVEcmdqEYviQ_zVtns5sMWGCwPJNF", jurusan: "Momen" },
+  { id: "1ZSCexKVVB5uSWzo3kC1rjqqL06byW3Lo", jurusan: "Momen" },
+  { id: "1aWk5nd86FUAKt3YySV95zogJV1VcPk_l", jurusan: "Momen" },
+  { id: "1bZeRwvgrxnXdVxYdN4tUhm7zvSw8koXC", jurusan: "Momen" },
+  { id: "1bgaE-gLvrJbo-cXus92lgNKjhkj3G2Tf", jurusan: "Momen" },
+  { id: "1pSgTy6-5T53BN9a7gR8OwPd3tz8y1hD9", jurusan: "Momen" },
+  { id: "1abyCa76ex7p_jW4_QAn2IaY9xU77H8QH", jurusan: "Momen" },
+  { id: "1jxOC4KjAeWB1_g6pMtjYbjuZjScwKoBJ", jurusan: "Momen" },
+  { id: "1pZ6f39DN8Tb45B8Jcrh7TNqwSW8dt6MD", jurusan: "Momen" },
+  { id: "1twoK1HjUBlOSpxaL6fYk1udMEAzOyCCq", jurusan: "Momen" },
+  { id: "1wqz8R3jtBNKlSSVMYtgsVPiItdCZzYNc", jurusan: "Momen" },
+  { id: "1wdAgSHcOGpifjmHMlfb9lifl589ea_r4", jurusan: "Momen" },
+  { id: "12TLLHazFuOtgSWlmlu9csYySJtIOIRUB", jurusan: "Momen" },
+  { id: "13dfQV-YMF5PFemSX4hN1NMkfqLcvi2zB", jurusan: "Momen" },
+  { id: "14mo1o7XKo404Qt4RoEGFtsbIhov0iigL", jurusan: "Momen" },
+  { id: "15sr6vcbH3jcy4VdaTwEVPbpxOTLn6xBA", jurusan: "Momen" },
+  { id: "15t_KOq95JFmjHJ0Sb66weT3Nlr3pYee9", jurusan: "Momen" },
+  { id: "15wJ6PJRwrxmCYTa7F9Oxo803VSHFHB23", jurusan: "Momen" },
+  { id: "17XPYl661CJLIFHEebkmFX48RS4usyToh", jurusan: "Momen" },
+  { id: "17p6pdnAtpipUrnkRQcaIXD7yZzyOOzBB", jurusan: "Momen" },
+  { id: "17sMJE4nUTrU6ipKF4qeiYWRYE6Pakg95", jurusan: "Momen" },
+  { id: "19mhZG84F68GSXr9xJ0WRLwMBOiMwn36P", jurusan: "Momen" },
+  { id: "19syygApii2jH84Qc0vU-FhqHQwTmqtoz", jurusan: "Momen" },
+  { id: "1DcgEDYT1vMwm9yqSuYSZKzZ3uOGZ9Q8Q", jurusan: "Momen" },
+  { id: "1HgcUrrr7bS5U15Hx65njYZg30hrSNrts", jurusan: "Momen" },
+  { id: "1Ift3NFUHA1xAmLEAmUG4t3Yo3e986z0a", jurusan: "Momen" },
+  { id: "1JKWQrUqazmb79wSkpGW9s6lPvM5epfbx", jurusan: "Momen" },
+  { id: "1JPRFfzhwvjMOaJ9qVIrB9CwHKjkTvkPC", jurusan: "Momen" },
+  { id: "1Lt8vNAQA7i_DDY63szf8HkbW9a4tbqrq", jurusan: "Momen" },
+  { id: "1Mcuave7rMbht4q5Nc_5KWoqX8rjyeUMd", jurusan: "Momen" },
+  { id: "1NNOZ_Mp5UoDAaKTMpF4UtdBhxOqqDvjU", jurusan: "Momen" },
+  { id: "1P_o0HoQaTEovgAqq64KzH4O1YnCT-YED", jurusan: "Momen" },
+  { id: "1QE6MwIC4aQIoNNLkbYvfwfbt4hruIPuW", jurusan: "Momen" },
+  { id: "1QUqyqv2Lkh5r6uG-wJ4C2l-Coby9gaX6", jurusan: "Momen" },
+  { id: "1QjIUgN_Je1c6R4nQO0_fUz-vYiImXOug", jurusan: "Momen" },
+  { id: "1QsISWjqYq3etimIKx7F_UznNAEH9XFCY", jurusan: "Momen" },
+  { id: "1V--gZgouXoj2-6J6AFBw3QEJBTzM0TiR", jurusan: "Momen" },
+  { id: "1Xi1JjxOkD7p-t2NnPxLadz8WHDS-O4Rw", jurusan: "Momen" },
+  { id: "1XiaFHfHJve_RlMGd767-BEH7iaMVkhsW", jurusan: "Momen" },
+  { id: "1_b6vys6RfzolJ0Ssd2l1H9CoM6mnJp48", jurusan: "Momen" },
+  { id: "1aWYA91edNft3k581x8bVfk-Y-zEzKcmW", jurusan: "Momen" },
+  { id: "1ajQGBZOkojGyk4Rbgng9ZBC7Szh05bS7", jurusan: "Momen" },
+  { id: "1ao3CZKl3pDFcNtIbtrkrIJuSIamtPOiz", jurusan: "Momen" },
+  { id: "1cJPJhfRCr_o7ki8PksJNXWN0ZZk-mG8g", jurusan: "Momen" },
+  { id: "1ePXcafQuRYzFyXlHj4fOkNBBBrKuf8eM", jurusan: "Momen" },
+  { id: "1ehXd7r9JNXw-3GL4hbsGktM0pbZEBbDl", jurusan: "Momen" },
+  { id: "1f4Cx20TEFTwVhaNSWnBu0LRE0HLXD1Yv", jurusan: "Momen" },
+  { id: "1fN7tKcTk9th3Ftiv-ZOH_4lWsZGSVmXz", jurusan: "Momen" },
+  { id: "1geH2wr5zV_OOI8b8vNVe8J2fsyPpzA00", jurusan: "Momen" },
+  { id: "1j929M6_rHvwAvByymEn1amXhHRglyQ9U", jurusan: "Momen" },
+  { id: "1nvFWMkb_mI1Y68bVFjm7io8FcBKXsh0S", jurusan: "Momen" },
+  { id: "1o7YV9XsuLNMZHeAvVdkmDe3F23MR-Qi4", jurusan: "Momen" },
+  { id: "1pWUpjaypZdTaz-nBNZ203Kn0qWZ1ciXo", jurusan: "Momen" },
+  { id: "1rfdbWgCoj7myBozL2sZRMbKR967T8bvn", jurusan: "Momen" },
+  { id: "1s2QIvkhxRboPriYpu19FNsEVDNGNa3LF", jurusan: "Momen" },
+  { id: "1srxc7S7FrWVp8DsZbhdCdw-4XbPg0dHC", jurusan: "Momen" },
+  { id: "1tUOjuIDLb7B3VomyIylNwC1jF8EsZo6U", jurusan: "Momen" },
+  { id: "1u_6SfIE1DVO4ew2G7poumsGHeL6quXBT", jurusan: "Momen" },
+  { id: "1x-KlrZeI-U_IxGD_JSty2BkJYMq4DSup", jurusan: "Momen" },
+  { id: "1xayVAuPjjDnc4TwD0FuSkrxmFojAb5rI", jurusan: "Momen" },
+  { id: "1yYBq_EbiPBzgQ__sDPISFaBpSSetpTTd", jurusan: "Momen" },
+  { id: "1zSk-2b9aDAAGKRh9n8CMxf-HPuId_oPt", jurusan: "Momen" },
+  { id: "1AAvslP7fIzK7Rs9YhbUFCHvZ7ozi7_eX", jurusan: "Momen" },
+  { id: "1DkJyiBABDkFYBv3J7prcRJWkAXNU3988", jurusan: "Momen" },
+  { id: "1L_29Uuv9XbsGOGNu0BHIs74j6wXj4NrN", jurusan: "Momen" },
+  { id: "1P4LioRBB6QZptgeBZtYYRiWSVg4xddED", jurusan: "Momen" },
+  { id: "1R7Ppy3pjvs9CLcYTHqtluybTZ93AgeUQ", jurusan: "Momen" },
+  { id: "1llwtSeEcF4M7PQjFaqKqWA0PriC4l7mW", jurusan: "Momen" },
+  { id: "1wl9Op5UYQIsa7K7maIcjAS3gw6jcoNAO", jurusan: "Momen" },
+  { id: "1y0UNo6VXLJDP0WAUvA7f3fCi8cJriRLq", jurusan: "Momen" },
+  { id: "10FgENXY7GapYq2ov7eRP4ufXryRNzrxM", jurusan: "Momen" },
+  { id: "16z2ZraYYLrBAYOLB-swmzA2LuLJt8-6k", jurusan: "Momen" },
+  { id: "18aFo1mE-bWiGV7YAyU0NdvlZV0uh3kKR", jurusan: "Momen" },
+  { id: "19osmiIhQN04BMl8nNkfvT7Hm3N0zGcDp", jurusan: "Momen" },
+  { id: "1BDmnVPctErL_lFvMu4uIqeSJQ1RFws-I", jurusan: "Momen" },
+  { id: "1BwTNsVBKao2bsnxR5qWitA0Zc3J2a9FI", jurusan: "Momen" },
+  { id: "1LmYAoTZR1vIXb3dqJdS_uW68gDCVOFrs", jurusan: "Momen" },
+  { id: "1RSXMIItFR6TdCM9LeuDqDbC6Ds7m8JZj", jurusan: "Momen" },
+  { id: "1TqlMXoLY_gGy6HVqXG_MTf3nxPiw4Lri", jurusan: "Momen" },
+  { id: "1Z1I5-9PdOYIjvUAiFcaLld-9ngzIwORm", jurusan: "Momen" },
+  { id: "1_R4uge3OagUGN-MH2Mrp1_jCa8fOzs5g", jurusan: "Momen" },
+  { id: "1iIYqSjXPvE0mGgpGPk8lr-ELfj5Uh_kB", jurusan: "Momen" },
+  { id: "1pD7A1qTkgkwLeNbPjo6e2cxgUNCQmYOS", jurusan: "Momen" },
+  { id: "1qfMfVzfJ7Q4uAj2RoqX3k3CeDaa7lpGu", jurusan: "Momen" },
+  { id: "1y_oSMf7BJsvzOD0MtxaQ27kiKDht1Wwy", jurusan: "Momen" },
+  { id: "110wbIamkzVfi5gBwvAXKCYSOLXzQFQrs", jurusan: "Momen" },
+  { id: "12WUdBwZe43NNApZdLvDaRk6Uoy7SRtMT", jurusan: "Momen" },
+  { id: "16GiMsXxcJgHAVhcywKGbvDIkMNfGkKUO", jurusan: "Momen" },
+  { id: "1F2zJ9KDPv1tDcPjV2NJWJFRbCV21-Veo", jurusan: "Momen" },
+  { id: "1HznJl08g7AGNJvDyw7bEEaqjDTnlSV0e", jurusan: "Momen" },
+  { id: "1bsC0plnywAVeOIVK4ELGYAfI4hL2aYzx", jurusan: "Momen" },
+  { id: "1d1g5G3IZY-D6SQf32GD3AE4iv9cqDZFg", jurusan: "Momen" },
+  { id: "1ekDSv2CUEcuAiHcIlBBdMirIsObXt2Af", jurusan: "Momen" },
+  { id: "1fO5eaQHRG1_AhRyv-ou-WBmzJmCWsHAx", jurusan: "Momen" },
+  { id: "1fTy9a3D0tQBjXh_ze9DMYkEwm-4xBeDC", jurusan: "Momen" },
+  { id: "1xMPJOmXOyY1ItJ9L-8n3UPbE1NOWdhzx", jurusan: "Momen" },
+  { id: "10P-0p9o7p5NhgZYhThSvt_pmxOBPakRT", jurusan: "Momen" },
+  { id: "1A8gTN6NCnLGObkxUjtC5EQwzx3Pqwsjy", jurusan: "Momen" },
+  { id: "1FXbYHicsI5nm-iwRCdFScIj4VnVgThdr", jurusan: "Momen" },
+  { id: "1Po7KLrcfkIf9MO6Byj17DlH_eY2qTTUp", jurusan: "Momen" },
+  { id: "1u-nAqktkvVxbhubufGcXias0Kglb4NiV", jurusan: "Momen" },
+  { id: "1yBkdJ5_RePuN-teHZ3OU_0nUeRQ2ajhG", jurusan: "Momen" },
+  { id: "108P19A0EQfsQhfVn84wZfrAzgBT_wCFa", jurusan: "Momen" },
+  { id: "14hSamQlYvY_MD3DjiCtOzs0ckHlJvwPj", jurusan: "Momen" },
+  { id: "15I2Pw_nHKSu2ccpQIopVlh186Lvw5pTx", jurusan: "Momen" },
+  { id: "1EK1E9ksTD9x7rShPcsHme1a7jVXmLWVV", jurusan: "Momen" },
+  { id: "1F0c53ZVYz2iiMKOUUB63XRuUCCbNvqwl", jurusan: "Momen" },
+  { id: "1LJj2HVSNYH4MUQ45RYJ34cZxnI5foMfl", jurusan: "Momen" },
+  { id: "1nx31nx9fXgbYmq0MToCEq5DnXNsAlSqn", jurusan: "Momen" },
+  { id: "1xDWdyHeCW8ZfMKsLi179uNVkM1Qwiaps", jurusan: "Momen" },
+  { id: "1y3e3jEFJyAQYF6KNsHUvHII7MRucK6rE", jurusan: "Momen" },
+  { id: "1GejDF2cLyg3A8aEaP0RFwWgwOxBeMnQZ", jurusan: "Momen" },
+  { id: "1Pn5_k6x5GOiy4UI5cgJIjJb46eELR8l5", jurusan: "Momen" },
+  { id: "12z4cojDO1rq7HcttyuruZhKPn1wIxiQc", jurusan: "Momen" },
+  { id: "1FllfIIiu3ZGshfrB3WRr1NwBgFVBaVBj", jurusan: "Momen" },
+  { id: "1PQITVAK7kKFqwG0cH8btBoAtX-yN2umV", jurusan: "Momen" },
+  { id: "1SePTdHaxDF3EX1g4YBPLqSr8BfhGmFuy", jurusan: "Momen" },
+  { id: "1T3J1wwIwjlNE_50qBI_E_W3j6Bxf60gW", jurusan: "Momen" },
+  { id: "1ZD0fs_neS3wi_9qNIpaTkbMZnp-zV6dO", jurusan: "Momen" },
+  { id: "1fH84ikiKf0dWFaEAgHaljzd4SJ5J750e", jurusan: "Momen" },
+  { id: "1kRa6Iy1lYwxTyMii1nvnIxOrOAaiVpYz", jurusan: "Momen" },
+  { id: "1n88p5qlljnF-TqfZ86Bpit7rJAgSyyQZ", jurusan: "Momen" },
+  { id: "1qxSpusCjQlwBeUtOOjtfdm3hTFNkG1sD", jurusan: "Momen" },
+  { id: "1ukXyT2sJyZmA7Z_EMJPO5iAN-DWAaCNb", jurusan: "Momen" },
+  { id: "1Lm0Bk54AOT7nefdQKiaMkKpXHxkmihRU", jurusan: "Momen" },
+  { id: "1Q3s8qzinnMakwcQv-nMDaA9UwiZ4FDDw", jurusan: "Momen" },
+  { id: "1gE5kvBFzd7VO_lGaOyX-0wg3SffQfL5K", jurusan: "Momen" },
+  { id: "1nIoi0-su-U39vqAtNXDHWVIqjRsW2mIa", jurusan: "Momen" },
+  { id: "1sLhsZe4ilrPV6fD2JEOypXWkDqw5Ich0", jurusan: "Momen" },
+  { id: "1ziEmZ1sGr4zA1SEsq93ym04giVgNO7k8", jurusan: "Momen" },
+  { id: "1-vML3z-zRCkxcfpYLkIxm71soFFO1x-j", jurusan: "Momen" },
+  { id: "10gSeEzz5_9qR4t9-POr1umtQdXvM_Qr3", jurusan: "Momen" },
+  { id: "19f4IgNE3x4UXGwfqXHJo2mxjn30Dzh11", jurusan: "Momen" },
+  { id: "1EXDPiaIqAow2yWTt6797SNVMcRx9UwTU", jurusan: "Momen" },
+  { id: "1O6QdM8jktMQWlB6PEABLISg-mZfkQRVH", jurusan: "Momen" },
+  { id: "1RX45T7ag--3fWaGpFVm2xhBt-OzLSKMk", jurusan: "Momen" },
+  { id: "1Yhz-4tIRdj45339OxnfjgMULW5piQRUv", jurusan: "Momen" },
+  { id: "1jk7uHIAKnZqVhH95t6uuNw2moPeQ4iTF", jurusan: "Momen" },
+  { id: "1w89MkmjMNZXIqE9timPHb_az19DU-1m3", jurusan: "Momen" },
+  { id: "1wD3llqSu1HWZBPfxqfxSqU2BkaUhNjWy", jurusan: "Momen" },
+  { id: "10H78snzmLa8RTSyR8Q8g-JtnjV5To774", jurusan: "Momen" },
+  { id: "113cN4gh3lSiAxWFKrNaEwQAY7s_Di6Za", jurusan: "Momen" },
+  { id: "14U6aSmmGcwlvaOG30j4HOLFnZ9M3ahJ6", jurusan: "Momen" },
+  { id: "1AvQd1xCQmahFD68csfxdjNdbWp4Qtgm0", jurusan: "Momen" },
+  { id: "1FH6z1zIjUJeMVTE_zwFa0tXbcRhft_q3", jurusan: "Momen" },
+  { id: "1HDg1LgKLBp1W9S8mC9ROFxqPjjzadYZx", jurusan: "Momen" },
+  { id: "1IBfU8h3TUIzmgJJxHdHAMwMNijj1xGh8", jurusan: "Momen" },
+  { id: "1Jb0Yy07lhP40WDklTTw14Ek__p3OAhYb", jurusan: "Momen" },
+  { id: "1L1YXZTe4iOqKlf_sHb_pUidyxpXyXxzG", jurusan: "Momen" },
+  { id: "1LCXHrC0QK8ACzc6Zd5XOaIxG30Up-9tr", jurusan: "Momen" },
+  { id: "1LSDGFt8dJZmzkFCEmnfQRcMS4Vd_G9jY", jurusan: "Momen" },
+  { id: "1LkQXjk3fkz-rA2mCIZjRHH5N5aff3nLY", jurusan: "Momen" },
+  { id: "1PJGIcwYKlope158wPO0nFn7Ggak0j88-", jurusan: "Momen" },
+  { id: "1RwBi80P6KvxVF1QPt5r6WPXfSNZF4E9q", jurusan: "Momen" },
+  { id: "1Zu2Z_fCzTaRtcW201c4DEOJy-oa2q-Nd", jurusan: "Momen" },
+  { id: "1bp7CI3jBSCSo6doLMJHJ31rcEXOopFEC", jurusan: "Momen" },
+  { id: "1i0jxN6YVxoUXRmGHIH4bvmtAhMecXTOP", jurusan: "Momen" },
+  { id: "1lAfonbI0MmByp2DARuy22ntQC6G1IrPp", jurusan: "Momen" },
+  { id: "1lSgvaB0R3hqg5yZr0G5fi92JdSeWykcA", jurusan: "Momen" },
+  { id: "1rusJqnVAkFSDY3DnegPWejE-JJjok-Fk", jurusan: "Momen" },
+  { id: "1tOvVwoeLjbv1Wr7QVXtlv_ZJIoLhNWiC", jurusan: "Momen" },
+  { id: "1uoHr9s-f9Bb09KOB6NcXSNus_E3nj82J", jurusan: "Momen" },
+  { id: "1xeKkW760q8Hu5E-CYVi3vG5Oux4J-BsM", jurusan: "Momen" },
+  { id: "1z6WNQ1Z9YJCFGrBPzTUfn5mvF5GVqqm3", jurusan: "Momen" },
+  { id: "1-OcPju2I_xQqQk4wf-bcoaQ7h8354KB-", jurusan: "Momen" },
+  { id: "14Lci79M_d_op-9JCJ4vtoYKGx2m6GPP6", jurusan: "Momen" },
   { id: "15L3MLS_p9ee2PQGhPZWSADPpzlJKeghB", jurusan: "Momen" },
   { id: "16YZWrAApa9j8SwxI62RZTf89rb4BwN1-", jurusan: "Momen" },
   { id: "183gk_o_ZE5MHJuJeokeS9JbgkRhr-1Ht", jurusan: "Momen" },
@@ -1821,6 +2419,16 @@ function animateCounter(el) {
 //  INIT
 // ═══════════════════════════════
 renderGallery();
+// ═══════════════════════════════
+//  KEAMANAN ANTI KLIK KANAN & HOLD
+// ═══════════════════════════════
+document.addEventListener('contextmenu', function(e) {
+  // Blokir klik kanan (atau tahan lama di beberapa HP) pada gambar
+  if (e.target.tagName === 'IMG' || e.target.closest('.gallery-item') || e.target.closest('#lightbox')) {
+    e.preventDefault();
+  }
+});
+
 </script>
 </body>
 </html>
