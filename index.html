@@ -46,6 +46,12 @@
     overflow-x: hidden;
     cursor: none;
   }
+    /* ── MENGHILANGKAN HIGHLIGHT BIRU SAAT DITEKAN ── */
+  * {
+    -webkit-tap-highlight-color: transparent !important;
+    outline: none !important;
+  }
+
     /* ── ANTI MALING GAMBAR (NO HOLD & NO DRAG) ── */
   img {
     -webkit-touch-callout: none !important; /* Mematikan menu "Simpan Gambar" di HP */
@@ -2430,7 +2436,7 @@ document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
   }
 });
-// FUNGSI DOWNLOAD LANGSUNG (ANTI-REDIRECT & ANTI HOLD)
+// FUNGSI DOWNLOAD LANGSUNG (ANTI-REDIRECT & ANTI POP-UP AKUN)
 document.getElementById('lbDownload').addEventListener('click', async function() {
   const photo = visiblePhotos[lightboxIndex];
   if (photo.demo) return;
@@ -2439,9 +2445,13 @@ document.getElementById('lbDownload').addEventListener('click', async function()
   const originalContent = downloadBtn.innerHTML;
   
   try {
+    // 1. Ubah tombol jadi status loading
     downloadBtn.innerHTML = "<span style='font-size:0.6rem;'>Menyimpan...</span>";
-    // Menarik gambar di latar belakang agar tidak pindah ke Google Drive
-    const response = await fetch(`https://drive.google.com/uc?export=download&id=${photo.id}`);
+    
+    const imgUrl = `https://drive.google.com/thumbnail?id=${photo.id}&sz=w2500`;
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imgUrl)}`;
+    
+    const response = await fetch(proxyUrl);
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
     
@@ -2454,9 +2464,18 @@ document.getElementById('lbDownload').addEventListener('click', async function()
     
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
+
+    // 2. TAMPILKAN NOTIFIKASI BERHASIL DI TOMBOL
+    downloadBtn.innerHTML = "<span style='font-size:0.6rem; color: #a8ffb2;'>Berhasil! ✓</span>";
+    
+    // Kembalikan tombol ke teks "Simpan" setelah 3 detik
+    setTimeout(() => {
+      downloadBtn.innerHTML = originalContent;
+    }, 3000);
+
   } catch (error) {
-    window.open(`https://drive.google.com/uc?export=download&id=${photo.id}`, '_blank');
-  } finally {
+    // Jika sistem gagal, buka gambar mentah murni
+    window.open(`https://drive.google.com/thumbnail?id=${photo.id}&sz=w2500`, '_blank');
     downloadBtn.innerHTML = originalContent;
   }
 });
