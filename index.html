@@ -52,15 +52,6 @@
     outline: none !important;
   }
 
-    /* ── ANTI MALING GAMBAR (NO HOLD & NO DRAG) ── */
-  img {
-    -webkit-touch-callout: none !important; /* Mematikan menu "Simpan Gambar" di HP */
-    -webkit-user-select: none !important;   /* Mencegah gambar kena blok */
-    user-select: none !important;
-    -webkit-user-drag: none !important;     /* Mencegah gambar diseret */
-    pointer-events: none;                   /* Aman untuk lightbox */
-  }
-
   /* CUSTOM CURSOR */
   .cursor {
     position: fixed; width: 10px; height: 10px;
@@ -826,10 +817,10 @@
     <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
   </button>
   
-  <button class="lb-ctrl lb-download" id="lbDownload">
+    <a class="lb-ctrl lb-download" id="lbDownload" target="_blank">
     <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
     <span>Simpan</span>
-  </button>
+  </a>
   
   <button class="lb-ctrl lb-nav lb-prev" id="lbPrev">
     <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
@@ -2249,6 +2240,15 @@ function updateLightbox() {
   } else {
     lbImg.src = `https://drive.google.com/thumbnail?id=${photo.id}&sz=w1200`;
     lbDownload.style.display = 'flex'; 
+    
+    // ── BIKIN NAMA ACAK BIAR GAK KETAHUAN COPY ──
+    // Hasilnya nanti misalnya: KENANGAN_739104.jpg
+    const angkaRandom = Math.floor(Math.random() * 900000) + 100000;
+    const namaFile = `KENANGAN_${angkaRandom}.jpg`;
+    
+    // ── KEMBALI KE BASIC DENGAN NAMA BARU ──
+    lbDownload.href = `https://drive.google.com/uc?export=download&id=${photo.id}`;
+    lbDownload.setAttribute('download', namaFile);
   }
 }
 
@@ -2428,69 +2428,6 @@ function animateCounter(el) {
 // ═══════════════════════════════
 renderGallery();
 // ═══════════════════════════════
-//  KEAMANAN ANTI KLIK KANAN & HOLD
-// ═══════════════════════════════
-document.addEventListener('contextmenu', function(e) {
-  // Blokir klik kanan (atau tahan lama di beberapa HP) pada gambar
-  if (e.target.tagName === 'IMG' || e.target.closest('.gallery-item') || e.target.closest('#lightbox')) {
-    e.preventDefault();
-  }
-});
-// FUNGSI DOWNLOAD LANGSUNG (ANTI-REDIRECT & ANTI POP-UP AKUN)
-document.getElementById('lbDownload').addEventListener('click', async function() {
-  const photo = visiblePhotos[lightboxIndex];
-  if (photo.demo) return;
-
-  const downloadBtn = this;
-  const originalContent = downloadBtn.innerHTML;
-  
-  try {
-    downloadBtn.innerHTML = "<span style='font-size:0.6rem;'>Menyimpan...</span>";
-    
-    const imgUrl = `https://drive.google.com/thumbnail?id=${photo.id}&sz=w2500`;
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imgUrl)}`;
-    
-    const response = await fetch(proxyUrl);
-    
-    // ── KUNCI PERBAIKAN: Cek apakah file benar-benar gambar ──
-    const contentType = response.headers.get("content-type");
-    if (!response.ok || !contentType || !contentType.includes("image")) {
-        throw new Error("Proxy error: File bukan gambar");
-    }
-    
-    const blob = await response.blob();
-    
-    // Pengecekan ganda: Jika ukuran file terlalu kecil (kurang dari 10KB), berarti file corrupt
-    if (blob.size < 10000) {
-        throw new Error("Proxy error: Ukuran file corrupt");
-    }
-
-    const url = window.URL.createObjectURL(blob);
-    
-    const a = document.createElement('a');
-    a.style.display = 'none';
-    a.href = url;
-    a.download = `Kenangan_Angkatan11_${photo.id}.jpg`;
-    document.body.appendChild(a);
-    a.click();
-    
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
-
-    // TAMPILKAN NOTIFIKASI BERHASIL
-    downloadBtn.innerHTML = "<span style='font-size:0.6rem; color: #a8ffb2;'>Berhasil! ✓</span>";
-    setTimeout(() => { downloadBtn.innerHTML = originalContent; }, 3000);
-
-  } catch (error) {
-    // ── JALUR CADANGAN AMAN ──
-    // Jika sistem diam-diam gagal, otomatis buka foto aslinya di tab baru. 
-    // Di tab baru ini, teman lu bisa menahan layar (hold) untuk download dengan aman 
-    // karena sudah lepas dari aturan blokir web lu.
-    window.open(`https://drive.google.com/thumbnail?id=${photo.id}&sz=w2500`, '_blank');
-    downloadBtn.innerHTML = originalContent;
-  }
-});
-
 
 </script>
 </body>
