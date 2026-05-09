@@ -467,7 +467,12 @@
     font-size: 0.7rem; letter-spacing: 0.15em;
     text-transform: uppercase; text-decoration: none;
     gap: 0.5rem;
+    /* ── TAMBAHAN WARNA & KURSOR ── */
+    border: 1px solid rgba(201,168,76,0.3);
+    background: rgba(18, 16, 30, 0.6);
+    cursor: auto !important;
   }
+
   .lb-download svg { width: 18px; height: 18px; }
 
   .lb-caption {
@@ -797,7 +802,7 @@
       </a>
 
       <!-- Facebook -->
-      <a href="https://facebook.com/" target="_blank" class="social-link">
+      <a href="https://www.facebook.com/profile.php?id=100083374238442" target="_blank" class="social-link">
         <div class="social-icon">
           <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
         </div>
@@ -815,10 +820,10 @@
     <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
   </button>
   
-  <a href="#" class="lb-ctrl lb-download" id="lbDownload" target="_blank">
+  <button class="lb-ctrl lb-download" id="lbDownload">
     <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
     <span>Simpan</span>
-  </a>
+  </button>
   
   <button class="lb-ctrl lb-nav lb-prev" id="lbPrev">
     <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
@@ -2227,22 +2232,19 @@ function closeLightbox() {
 function updateLightbox() {
   const photo = visiblePhotos[lightboxIndex];
   const lbImg = document.getElementById('lbImg');
-  const lbDownload = document.getElementById('lbDownload'); // Mengambil elemen tombol download
+  const lbDownload = document.getElementById('lbDownload');
   
   document.getElementById('lbCaption').textContent =
     `${photo.jurusan} · Foto ${lightboxIndex + 1} / ${visiblePhotos.length} · Perpisahan 2026`;
 
   if (photo.demo) {
     lbImg.src = createPlaceholderCanvas(photo.jurusan, photo.demoIndex);
-    lbDownload.style.display = 'none'; // Sembunyikan tombol kalau cuma foto demo
+    lbDownload.style.display = 'none'; 
   } else {
     lbImg.src = `https://drive.google.com/thumbnail?id=${photo.id}&sz=w1200`;
-    // Menggunakan link khusus Google Drive untuk langsung mendownload file aslinya
-    lbDownload.href = `https://drive.google.com/uc?export=download&id=${photo.id}`;
-    lbDownload.style.display = 'flex'; // Munculkan tombol
+    lbDownload.style.display = 'flex'; 
   }
 }
-
 
 document.getElementById('lbClose').addEventListener('click', closeLightbox);
 document.getElementById('lbPrev').addEventListener('click', () => {
@@ -2426,6 +2428,36 @@ document.addEventListener('contextmenu', function(e) {
   // Blokir klik kanan (atau tahan lama di beberapa HP) pada gambar
   if (e.target.tagName === 'IMG' || e.target.closest('.gallery-item') || e.target.closest('#lightbox')) {
     e.preventDefault();
+  }
+});
+// FUNGSI DOWNLOAD LANGSUNG (ANTI-REDIRECT & ANTI HOLD)
+document.getElementById('lbDownload').addEventListener('click', async function() {
+  const photo = visiblePhotos[lightboxIndex];
+  if (photo.demo) return;
+
+  const downloadBtn = this;
+  const originalContent = downloadBtn.innerHTML;
+  
+  try {
+    downloadBtn.innerHTML = "<span style='font-size:0.6rem;'>Menyimpan...</span>";
+    // Menarik gambar di latar belakang agar tidak pindah ke Google Drive
+    const response = await fetch(`https://drive.google.com/uc?export=download&id=${photo.id}`);
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = `Kenangan_Angkatan11_${photo.id}.jpg`;
+    document.body.appendChild(a);
+    a.click();
+    
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  } catch (error) {
+    window.open(`https://drive.google.com/uc?export=download&id=${photo.id}`, '_blank');
+  } finally {
+    downloadBtn.innerHTML = originalContent;
   }
 });
 
