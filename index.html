@@ -2445,14 +2445,26 @@ document.getElementById('lbDownload').addEventListener('click', async function()
   const originalContent = downloadBtn.innerHTML;
   
   try {
-    // 1. Ubah tombol jadi status loading
     downloadBtn.innerHTML = "<span style='font-size:0.6rem;'>Menyimpan...</span>";
     
     const imgUrl = `https://drive.google.com/thumbnail?id=${photo.id}&sz=w2500`;
     const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imgUrl)}`;
     
     const response = await fetch(proxyUrl);
+    
+    // ── KUNCI PERBAIKAN: Cek apakah file benar-benar gambar ──
+    const contentType = response.headers.get("content-type");
+    if (!response.ok || !contentType || !contentType.includes("image")) {
+        throw new Error("Proxy error: File bukan gambar");
+    }
+    
     const blob = await response.blob();
+    
+    // Pengecekan ganda: Jika ukuran file terlalu kecil (kurang dari 10KB), berarti file corrupt
+    if (blob.size < 10000) {
+        throw new Error("Proxy error: Ukuran file corrupt");
+    }
+
     const url = window.URL.createObjectURL(blob);
     
     const a = document.createElement('a');
@@ -2465,20 +2477,20 @@ document.getElementById('lbDownload').addEventListener('click', async function()
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
 
-    // 2. TAMPILKAN NOTIFIKASI BERHASIL DI TOMBOL
+    // TAMPILKAN NOTIFIKASI BERHASIL
     downloadBtn.innerHTML = "<span style='font-size:0.6rem; color: #a8ffb2;'>Berhasil! ✓</span>";
-    
-    // Kembalikan tombol ke teks "Simpan" setelah 3 detik
-    setTimeout(() => {
-      downloadBtn.innerHTML = originalContent;
-    }, 3000);
+    setTimeout(() => { downloadBtn.innerHTML = originalContent; }, 3000);
 
   } catch (error) {
-    // Jika sistem gagal, buka gambar mentah murni
+    // ── JALUR CADANGAN AMAN ──
+    // Jika sistem diam-diam gagal, otomatis buka foto aslinya di tab baru. 
+    // Di tab baru ini, teman lu bisa menahan layar (hold) untuk download dengan aman 
+    // karena sudah lepas dari aturan blokir web lu.
     window.open(`https://drive.google.com/thumbnail?id=${photo.id}&sz=w2500`, '_blank');
     downloadBtn.innerHTML = originalContent;
   }
 });
+
 
 </script>
 </body>
